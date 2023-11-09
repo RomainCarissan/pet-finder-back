@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const LostPet = require("../models/LostPet.model");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 router.get("/", (req, res, next) => {
   LostPet.find({})
@@ -13,18 +14,6 @@ router.get("/", (req, res, next) => {
     });
 });
 
-// Creates a new lost pet
-router.post("/", async (req, res, next) => {
-  try {
-    const lostPet = { ...req.body };
-    const createdLostPet = await LostPet.create(lostPet);
-    res.status(201).json(createdLostPet);
-  } catch (error) {
-    res.status(500).json({ message: "Error while creating a new lost pet" });
-    next(error);
-  }
-});
-
 // Retrieves a specific lost pet by id
 router.get("/:lostPetId", async (req, res, next) => {
   try {
@@ -35,6 +24,21 @@ router.get("/:lostPetId", async (req, res, next) => {
     res
       .status(500)
       .json({ message: "Error while getting a specific lost pet" });
+    next(error);
+  }
+});
+
+router.use(isAuthenticated);
+
+// Creates a new lost pet
+router.post("/", async (req, res, next) => {
+  try {
+    const creatorId = req.userId;
+    const lostPet = { ...req.body, creator: creatorId };
+    const createdLostPet = await LostPet.create(lostPet);
+    res.status(201).json(createdLostPet);
+  } catch (error) {
+    res.status(500).json({ message: "Error while creating a new lost pet" });
     next(error);
   }
 });

@@ -8,21 +8,21 @@ const lostPetSchema = new Schema(
       default: true,
     },
 
-    /* creator: {
+    creator: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",
       required: true,
-    }, */
+    },
 
     petName: {
       type: String,
       required: [true, "petName is required."],
     },
 
-    dateOfLoss: {
+    LossDate: {
       type: Date,
       default: Date.now,
-      required: [true, "dateOfLoss is required."],
+      required: [true, "LossDate is required."],
     },
 
     petType: {
@@ -41,12 +41,6 @@ const lostPetSchema = new Schema(
       type: String,
       enum: ["Yes", "No"],
       required: [true, "sterilized is required."],
-    },
-
-    identified: {
-      type: String,
-      enum: ["Yes", "No"],
-      required: [true, "identified is required."],
     },
 
     identification: {
@@ -607,9 +601,9 @@ const lostPetSchema = new Schema(
       type: String,
     },
 
-    placeOfLoss: {
+    lossPlace: {
       type: String,
-      required: [true, "PlaceOf is required."],
+      required: [true, "lossPlace is required."],
     },
   },
   {

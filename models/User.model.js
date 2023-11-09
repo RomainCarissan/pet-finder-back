@@ -30,7 +30,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "phone is required."],
     },
-    departement: {
+    department: {
       type: String,
       // The enum is temporary, it will be handle by a form on the front
       enum: [

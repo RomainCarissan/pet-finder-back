@@ -1,28 +1,32 @@
 const express = require("express");
 const router = express.Router();
-
-// ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
-
-// ℹ️ Handles password encryption
 const jwt = require("jsonwebtoken");
-
 // Require the User model in order to interact with the database
 const User = require("../models/User.model");
-
 // Require necessary (isAuthenticated) middleware in order to control access to specific routes
 const { isAuthenticated } = require("../middleware/jwt.middleware.js");
-
-// How many rounds should bcrypt run the salt (default - 10 rounds)
 const saltRounds = 10;
 
 // POST /auth/signup  - Creates a new user in the database
 router.post("/signup", (req, res, next) => {
-  const { email, password, name } = req.body;
+  const { email, password, name, surname, adress, phone, department } =
+    req.body;
 
   // Check if email or password or name are provided as empty strings
-  if (email === "" || password === "" || name === "") {
-    res.status(400).json({ message: "Provide email, password and name" });
+  if (
+    email === "" ||
+    password === "" ||
+    name === "" ||
+    surname === "" ||
+    adress === "" ||
+    phone === "" ||
+    department === ""
+  ) {
+    res.status(400).json({
+      message:
+        "Provide email, password, name, surname, adress, phone and department",
+    });
     return;
   }
 
@@ -58,15 +62,24 @@ router.post("/signup", (req, res, next) => {
 
       // Create the new user in the database
       // We return a pending promise, which allows us to chain another `then`
-      return User.create({ email, password: hashedPassword, name });
+      return User.create({
+        email,
+        password: hashedPassword,
+        name,
+        surname,
+        adress,
+        phone,
+        department,
+      });
     })
     .then((createdUser) => {
       // Deconstruct the newly created user object to omit the password
       // We should never expose passwords publicly
-      const { email, name, _id } = createdUser;
+      const { email, name, _id, surname, adress, phone, department } =
+        createdUser;
 
       // Create a new object that doesn't expose the password
-      const user = { email, name, _id };
+      const user = { email, name, _id, surname, adress, phone, department };
 
       // Send a json response containing the user object
       res.status(201).json({ user: user });
@@ -89,7 +102,7 @@ router.post("/login", (req, res, next) => {
     .then((foundUser) => {
       if (!foundUser) {
         // If the user is not found, send an error response
-        res.status(401).json({ message: "User not found." });
+        res.status(401).json({ message: "Wrong credentials!" });
         return;
       }
 
@@ -98,7 +111,8 @@ router.post("/login", (req, res, next) => {
 
       if (passwordCorrect) {
         // Deconstruct the user object to omit the password
-        const { _id, email, name } = foundUser;
+        const { _id, email, name, surname, adress, phone, department } =
+          foundUser;
 
         // Create an object that will be set as the token payload
         const payload = { _id, email, name };
@@ -112,7 +126,7 @@ router.post("/login", (req, res, next) => {
         // Send the token as the response
         res.status(200).json({ authToken: authToken });
       } else {
-        res.status(401).json({ message: "Unable to authenticate the user" });
+        res.status(401).json({ message: "Wrong credentials!" });
       }
     })
     .catch((err) => next(err)); // In this case, we send error handling to the error handling middleware.
