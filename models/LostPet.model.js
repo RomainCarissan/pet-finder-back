@@ -19,10 +19,10 @@ const lostPetSchema = new Schema(
       required: [true, "petName is required."],
     },
 
-    LossDate: {
+    lossDate: {
       type: Date,
       default: Date.now,
-      required: [true, "LossDate is required."],
+      required: [true, "lossDate is required."],
     },
 
     petType: {
@@ -40,6 +40,7 @@ const lostPetSchema = new Schema(
     sterilized: {
       type: String,
       enum: ["Yes", "No"],
+      default: "No",
       required: [true, "sterilized is required."],
     },
 
@@ -510,6 +511,7 @@ const lostPetSchema = new Schema(
     mixed: {
       type: String,
       enum: ["Yes", "No"],
+      default: "No",
       required: [true, "mixed is required."],
     },
 

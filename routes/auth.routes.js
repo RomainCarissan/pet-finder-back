@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 // Require the User model in order to interact with the database
 const User = require("../models/User.model");
 // Require necessary (isAuthenticated) middleware in order to control access to specific routes
-const { isAuthenticated } = require("../middleware/jwt.middleware.js");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 const saltRounds = 10;
 
 // POST /auth/signup  - Creates a new user in the database
@@ -90,6 +90,7 @@ router.post("/signup", (req, res, next) => {
 // POST  /auth/login - Verifies email and password and returns a JWT
 router.post("/login", (req, res, next) => {
   const { email, password } = req.body;
+  //console.log(req.body);
 
   // Check if email or password are provided as empty string
   if (email === "" || password === "") {
@@ -122,6 +123,7 @@ router.post("/login", (req, res, next) => {
           algorithm: "HS256",
           expiresIn: "6h",
         });
+        //console.log(authToken);
 
         // Send the token as the response
         res.status(200).json({ authToken: authToken });
@@ -141,5 +143,14 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
   // Send back the token payload object containing the user data
   res.status(200).json(req.payload);
 });
+
+/* router.get("/verify", isAuthenticated, async (req, res, next) => {
+  try {
+    const connectedUser = await User.findById(req.userId);
+    res.json(connectedUser);
+  } catch (error) {
+    next(error);
+  }
+}); */
 
 module.exports = router;

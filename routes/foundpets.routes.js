@@ -29,12 +29,17 @@ router.get("/:foundPetId", async (req, res, next) => {
 
 router.use(isAuthenticated);
 
+const fileUploader = require("./../config/cloudinaryConfig");
+
 //Creates a new found pet
-router.post("/", async (req, res, next) => {
+router.post("/", fileUploader.single("picture"), async (req, res, next) => {
   try {
     const creatorId = req.userId;
-    /* console.log(creatorId); */
-    const foundPet = { ...req.body, creator: creatorId };
+    let picture;
+    if (req.file) {
+      picture = req.file.path;
+    }
+    const foundPet = { ...req.body, creator: creatorId, picture };
     const createdFoundPet = await FoundPet.create(foundPet);
     res.status(201).json(createdFoundPet);
   } catch (error) {
