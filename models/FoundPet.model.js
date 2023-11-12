@@ -111,7 +111,8 @@ const foundPetSchema = new Schema(
 
     picture: {
       type: String,
-      default: "",
+      default:
+        "https://fourleggedguru.com/wp-content/uploads/2015/03/fd928cb7bd8a6e81708f29e3711afd5e.jpg",
     },
 
     description: {
