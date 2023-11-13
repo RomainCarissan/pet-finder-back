@@ -30,6 +30,25 @@ router.get("/:lostPetId", async (req, res, next) => {
 
 router.use(isAuthenticated);
 
+// Retrieves a specific lost pet by the creator ID
+router.get("/creator/:lostPetCreatorId", async (req, res, next) => {
+  try {
+    const creatorId = req.params.lostPetCreatorId;
+    const lostPetReports = await LostPet.find({ creator: creatorId });
+    if (lostPetReports.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No lost pets found for this creator" });
+    }
+    res.status(200).json(lostPetReports);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error while getting all loss reports by creator" });
+    next(error);
+  }
+});
+
 const fileUploader = require("./../config/cloudinaryConfig");
 
 // Creates a new lost pet
@@ -50,24 +69,36 @@ router.post("/", fileUploader.single("picture"), async (req, res, next) => {
 });
 
 // Updates a specific lost pet by id
-router.put("/:lostPetId", async (req, res, next) => {
-  try {
-    const lostPetId = req.params.lostPetId;
-    const updatedLostPet = await LostPet.findByIdAndUpdate(
-      lostPetId,
-      req.body,
-      {
-        new: true,
+router.put(
+  "/:lostPetId",
+  fileUploader.single("picture"),
+  async (req, res, next) => {
+    try {
+      const lostPetId = req.params.lostPetId;
+      let picture;
+      if (req.file) {
+        picture = req.file.path;
       }
-    );
-    res.status(200).json(updatedLostPet);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error while updating a specific lost pet" });
-    next(error);
+      const updateFields = { ...req.body };
+      if (picture) {
+        updateFields.picture = picture;
+      }
+      const updatedLostPet = await LostPet.findByIdAndUpdate(
+        lostPetId,
+        updateFields,
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(updatedLostPet);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error while updating a specific lost pet" });
+      next(error);
+    }
   }
-});
+);
 
 // Deletes a specific lost pet by id
 router.delete("/:lostPetId", async (req, res, next) => {

@@ -29,6 +29,25 @@ router.get("/:foundPetId", async (req, res, next) => {
 
 router.use(isAuthenticated);
 
+// Retrieves a specific lost pet by the creator ID
+router.get("/creator/:foundPetCreatorId", async (req, res, next) => {
+  try {
+    const creatorId = req.params.foundPetCreatorId;
+    const foundPetReports = await FoundPet.find({ creator: creatorId });
+    if (foundPetReports.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No found pets found for this creator" });
+    }
+    res.status(200).json(foundPetReports);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error while getting all found reports by creator" });
+    next(error);
+  }
+});
+
 const fileUploader = require("./../config/cloudinaryConfig");
 
 //Creates a new found pet
@@ -47,25 +66,37 @@ router.post("/", fileUploader.single("picture"), async (req, res, next) => {
   }
 });
 
-//Updates a specific cohort by id
-router.put("/:foundPetId", async (req, res, next) => {
-  try {
-    const foundPetId = req.params.foundPetId;
-    const updatedFoundPet = await FoundPet.findByIdAndUpdate(
-      foundPetId,
-      req.body,
-      {
-        new: true,
+//Updates a specific foundpet by id
+router.put(
+  "/:foundPetId",
+  fileUploader.single("picture"),
+  async (req, res, next) => {
+    try {
+      const foundPetId = req.params.foundPetId;
+      let picture;
+      if (req.file) {
+        picture = req.file.path;
       }
-    );
-    res.status(200).json(updatedFoundPet);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error while updating a specific pet found" });
-    next(error);
+      const updateFields = { ...req.body };
+      if (picture) {
+        updateFields.picture = picture;
+      }
+      const updatedFoundPet = await FoundPet.findByIdAndUpdate(
+        foundPetId,
+        updateFields,
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(updatedFoundPet);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error while updating a specific pet found" });
+      next(error);
+    }
   }
-});
+);
 
 //Deletes a specific pet found by id
 router.delete("/:foundPetId", async (req, res) => {
