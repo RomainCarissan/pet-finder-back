@@ -61,6 +61,10 @@ const foundPetSchema = new Schema(
       type: String,
       required: [true, "foundPlace is required."],
     },
+
+    latLon: {
+      type: Array,
+    },
   },
   {
     timestamps: true,

@@ -89,6 +89,10 @@ const lostPetSchema = new Schema(
       type: String,
       required: [true, "lossPlace is required."],
     },
+
+    latLon: {
+      type: Array,
+    },
   },
   {
     timestamps: true,

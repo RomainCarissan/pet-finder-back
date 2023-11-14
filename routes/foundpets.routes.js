@@ -77,6 +77,7 @@ router.put(
       if (req.file) {
         picture = req.file.path;
       }
+      console.log(req.file);
       const updateFields = { ...req.body };
       if (picture) {
         updateFields.picture = picture;

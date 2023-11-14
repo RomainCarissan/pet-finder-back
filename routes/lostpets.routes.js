@@ -79,10 +79,12 @@ router.put(
       if (req.file) {
         picture = req.file.path;
       }
+      console.log(req.file);
       const updateFields = { ...req.body };
       if (picture) {
         updateFields.picture = picture;
       }
+      console.log(updateFields);
       const updatedLostPet = await LostPet.findByIdAndUpdate(
         lostPetId,
         updateFields,
