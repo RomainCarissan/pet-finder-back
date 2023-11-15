@@ -18,7 +18,12 @@ router.get("/", (req, res, next) => {
 router.get("/:lostPetId", async (req, res, next) => {
   try {
     const lostPetId = req.params.lostPetId;
-    const oneLostPet = await LostPet.findById(lostPetId);
+    const oneLostPet = await LostPet.findById(lostPetId)
+      .populate({
+        path: "creator",
+        select: "name lastName address phone",
+      })
+      .exec();
     res.status(200).json(oneLostPet);
   } catch (error) {
     res

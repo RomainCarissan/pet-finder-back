@@ -63,7 +63,7 @@ const foundPetSchema = new Schema(
     },
 
     latLon: {
-      type: Array,
+      type: String,
     },
   },
   {

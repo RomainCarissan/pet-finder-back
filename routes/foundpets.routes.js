@@ -17,7 +17,12 @@ router.get("/", (req, res, next) => {
 router.get("/:foundPetId", async (req, res, next) => {
   try {
     const foundPetId = req.params.foundPetId;
-    const oneFoundPet = await FoundPet.findById(foundPetId);
+    const oneFoundPet = await FoundPet.findById(foundPetId)
+      .populate({
+        path: "creator",
+        select: "name lastName address phone",
+      })
+      .exec();
     res.status(200).json(oneFoundPet);
   } catch (error) {
     res
@@ -73,6 +78,7 @@ router.put(
   async (req, res, next) => {
     try {
       const foundPetId = req.params.foundPetId;
+
       let picture;
       if (req.file) {
         picture = req.file.path;

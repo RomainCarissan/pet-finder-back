@@ -10,7 +10,7 @@ const saltRounds = 10;
 
 // POST /auth/signup  - Creates a new user in the database
 router.post("/signup", (req, res, next) => {
-  const { email, password, name, surname, adress, phone, department } =
+  const { email, password, name, lastName, address, phone, department } =
     req.body;
 
   // Check if email or password or name are provided as empty strings
@@ -18,14 +18,14 @@ router.post("/signup", (req, res, next) => {
     email === "" ||
     password === "" ||
     name === "" ||
-    surname === "" ||
-    adress === "" ||
+    lastName === "" ||
+    address === "" ||
     phone === "" ||
     department === ""
   ) {
     res.status(400).json({
       message:
-        "Provide email, password, name, surname, adress, phone and department",
+        "Provide email, password, name, lastName, address, phone and department",
     });
     return;
   }
@@ -66,8 +66,8 @@ router.post("/signup", (req, res, next) => {
         email,
         password: hashedPassword,
         name,
-        surname,
-        adress,
+        lastName,
+        address,
         phone,
         department,
       });
@@ -75,11 +75,11 @@ router.post("/signup", (req, res, next) => {
     .then((createdUser) => {
       // Deconstruct the newly created user object to omit the password
       // We should never expose passwords publicly
-      const { email, name, _id, surname, adress, phone, department } =
+      const { email, name, _id, lastName, address, phone, department } =
         createdUser;
 
       // Create a new object that doesn't expose the password
-      const user = { email, name, _id, surname, adress, phone, department };
+      const user = { email, name, _id, lastName, address, phone, department };
 
       // Send a json response containing the user object
       res.status(201).json({ user: user });
@@ -112,7 +112,7 @@ router.post("/login", (req, res, next) => {
 
       if (passwordCorrect) {
         // Deconstruct the user object to omit the password
-        const { _id, email, name, surname, adress, phone, department } =
+        const { _id, email, name, lastName, address, phone, department } =
           foundUser;
 
         // Create an object that will be set as the token payload

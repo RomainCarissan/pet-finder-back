@@ -91,7 +91,7 @@ const lostPetSchema = new Schema(
     },
 
     latLon: {
-      type: Array,
+      type: String,
     },
   },
   {
