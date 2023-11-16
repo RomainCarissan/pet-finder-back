@@ -4,7 +4,7 @@ const { Schema, model } = require("mongoose");
 const foundPetSchema = new Schema(
   {
     isLost: {
-      type: Boolean,
+      type: Boolean, //will be lost to create future notifications
       default: true,
     },
 
@@ -37,10 +37,10 @@ const foundPetSchema = new Schema(
     },
 
     identification: {
-      type: String,
+      type: String, //will be used to create future notifications
     },
     breed: {
-      type: String,
+      type: String, //only used of exotic pets
     },
 
     colors: {

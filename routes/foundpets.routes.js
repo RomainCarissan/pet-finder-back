@@ -1,7 +1,10 @@
 const router = require("express").Router();
 const FoundPet = require("../models/FoundPet.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
+const fileUploader = require("./../config/cloudinaryConfig");
 
+//Doesn't pass througt the is Authenticated middlewhere
+//Retrieves all the found pets thants to /api/foundpets/
 router.get("/", (req, res, next) => {
   FoundPet.find({})
     .then((foundPets) => {
@@ -25,14 +28,11 @@ router.get("/:foundPetId", async (req, res, next) => {
       .exec();
     res.status(200).json(oneFoundPet);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error while getting a specific pet found" });
     next(error);
   }
 });
 
-router.use(isAuthenticated);
+router.use(isAuthenticated); // The following routes goes througt the middlewhere to be accessed
 
 // Retrieves a specific lost pet by the creator ID
 router.get("/creator/:foundPetCreatorId", async (req, res, next) => {
@@ -46,24 +46,19 @@ router.get("/creator/:foundPetCreatorId", async (req, res, next) => {
     }
     res.status(200).json(foundPetReports);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error while getting all found reports by creator" });
     next(error);
   }
 });
 
-const fileUploader = require("./../config/cloudinaryConfig");
-
 //Creates a new found pet
 router.post("/", fileUploader.single("picture"), async (req, res, next) => {
   try {
-    const creatorId = req.userId;
+    const creatorId = req.userId; //get the current user's id thanks to the isAuthenticated
     let picture;
     if (req.file) {
       picture = req.file.path;
     }
-    const foundPet = { ...req.body, creator: creatorId, picture };
+    const foundPet = { ...req.body, creator: creatorId, picture }; //set the current user, as the creator of the new post
     const createdFoundPet = await FoundPet.create(foundPet);
     res.status(201).json(createdFoundPet);
   } catch (error) {
@@ -97,9 +92,6 @@ router.put(
       );
       res.status(200).json(updatedFoundPet);
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error while updating a specific pet found" });
       next(error);
     }
   }
@@ -112,7 +104,6 @@ router.delete("/:foundPetId", async (req, res) => {
     const deletedFoundPet = await FoundPet.findByIdAndDelete(foundPetId);
     res.sendStatus(204);
   } catch (error) {
-    res.status(500).json({ message: "Error while deleting a specific cohort" });
     next(error);
   }
 });

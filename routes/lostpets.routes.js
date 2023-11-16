@@ -26,9 +26,6 @@ router.get("/:lostPetId", async (req, res, next) => {
       .exec();
     res.status(200).json(oneLostPet);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error while getting a specific lost pet" });
     next(error);
   }
 });
@@ -47,9 +44,6 @@ router.get("/creator/:lostPetCreatorId", async (req, res, next) => {
     }
     res.status(200).json(lostPetReports);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error while getting all loss reports by creator" });
     next(error);
   }
 });
@@ -68,7 +62,6 @@ router.post("/", fileUploader.single("picture"), async (req, res, next) => {
     const createdLostPet = await LostPet.create(lostPet);
     res.status(201).json(createdLostPet);
   } catch (error) {
-    res.status(500).json({ message: "Error while creating a new lost pet" });
     next(error);
   }
 });
@@ -76,20 +69,20 @@ router.post("/", fileUploader.single("picture"), async (req, res, next) => {
 // Updates a specific lost pet by id
 router.put(
   "/:lostPetId",
-  fileUploader.single("picture"),
+  fileUploader.single("picture"), // Middleware to handle file upload
   async (req, res, next) => {
     try {
       const lostPetId = req.params.lostPetId;
       let picture;
       if (req.file) {
+        // Check if a file is uploaded and set the picture path
         picture = req.file.path;
       }
-      console.log(req.file);
-      const updateFields = { ...req.body };
+      const updateFields = { ...req.body }; // Create an object with updated fields from request body
       if (picture) {
-        updateFields.picture = picture;
+        updateFields.picture = picture; // If a picture is provided, update the picture field
       }
-      console.log(updateFields);
+      // Update the lost pet by ID and return the updated document
       const updatedLostPet = await LostPet.findByIdAndUpdate(
         lostPetId,
         updateFields,
@@ -99,9 +92,6 @@ router.put(
       );
       res.status(200).json(updatedLostPet);
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error while updating a specific lost pet" });
       next(error);
     }
   }
@@ -114,9 +104,6 @@ router.delete("/:lostPetId", async (req, res, next) => {
     const deletedLostPet = await LostPet.findByIdAndDelete(lostPetId);
     res.status(204).send();
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error while deleting a specific lost pet" });
     next(error);
   }
 });

@@ -11,6 +11,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// find specific users by id.
 router.get("/:id", async (req, res, next) => {
   const { id } = req.params;
   try {

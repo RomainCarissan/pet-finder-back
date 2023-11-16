@@ -4,7 +4,7 @@ const { Schema, model } = require("mongoose");
 const lostPetSchema = new Schema(
   {
     isLost: {
-      type: Boolean,
+      type: Boolean, //will be lost to create future notifications
       default: true,
     },
 
@@ -45,7 +45,7 @@ const lostPetSchema = new Schema(
     },
 
     identification: {
-      type: String,
+      type: String, //will be used to create future notifications
     },
 
     breed: {
@@ -91,8 +91,8 @@ const lostPetSchema = new Schema(
     },
 
     latLon: {
-      type: String,
-    },
+      type: String, //is stored on this format "lat,lon"
+    }, //can easily be get individualy in the front (searchPlaceInput)
   },
   {
     timestamps: true,

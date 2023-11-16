@@ -1,16 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("./../models/User.model");
+
+// Middleware to check if a user is authenticated
 const isAuthenticated = async (req, res, next) => {
   try {
     let token = req.headers.authorization;
-    //console.log(req.headers);
-    //console.log(token);
     if (!token) {
       return res.status(401).json({ message: "No token found in the headers" });
     }
     token = token.replace("Bearer ", "");
-
-    // console.log(token)
 
     const payload = jwt.verify(token, process.env.TOKEN_SECRET, {
       algorithms: ["HS256"],
@@ -23,6 +21,8 @@ const isAuthenticated = async (req, res, next) => {
     next(error);
   }
 };
+
+//For future use, role will be added in the user model to moderate the website
 async function isAdmin(req, res, next) {
   try {
     const currentUser = await User.findById(req.userId);
