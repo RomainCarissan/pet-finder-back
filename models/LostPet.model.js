@@ -46,6 +46,7 @@ const lostPetSchema = new Schema(
 
     identification: {
       type: String, //will be used to create future notifications
+      default: "none",
     },
 
     breed: {
